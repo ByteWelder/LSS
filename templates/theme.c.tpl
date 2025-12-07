@@ -7,13 +7,19 @@
 extern "C" {
 #endif
 
-{{DEFINES}}
+{{DEFINE_CONSTANTS}}
+
+typedef theme_{{THEME_NAME_LOWER}}_styles theme_t;
 
 typedef struct {
 {{STYLE_DECLARATIONS}}
-} theme_{{THEME_NAME_LOWERCASE}}_styles;
+} theme_t;
 
-lv_theme_t* lv_theme_{{THEME_NAME_LOWERCASE}}_init(
+static void style_init(theme_t* theme) {
+{{STYLE_INIT}}
+}
+
+lv_theme_t* lv_theme_{{THEME_NAME_LOWER}}_init(
     lv_display_t* disp,
     const lv_font_t* font
 ) {
