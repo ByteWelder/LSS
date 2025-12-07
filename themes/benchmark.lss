@@ -1,0 +1,36 @@
+// Floats
+@explicit-negative-float: -1.123;
+@explicit-positive-float: +1.123;
+@implicit-positive-float: 1.123;
+
+// Whole numbers
+@explicit-positive-number: +123;
+@explicit-negative-number: -123;
+@implicit-positive-number: 123;
+
+// Booleans
+@boolean-true: true;
+@boolean-false: false;
+
+// Colours
+@black: #000000;
+@background-color: @black;
+@shadow-color: #222;
+
+// Standalone comment
+
+// Separated
+// comment
+
+lv_scrollbar {
+}
+
+lv_button {
+  bgOpa: 255;
+  bgColor: @background-color;
+  shadowColor: @shadow-color;
+}
+
+theme {
+  name: "test";
+}

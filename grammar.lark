@@ -1,0 +1,46 @@
+%import common.DIGIT -> DIGIT
+%import common.LETTER -> LETTER
+%import common.HEXDIGIT -> HEXDIGIT
+%import common.SIGNED_INT -> SIGNED_INT
+%import common.WS -> WS
+%import common.SIGNED_NUMBER -> SIGNED_NUMBER
+%import common.ESCAPED_STRING -> ESCAPED_STRING
+%ignore WS
+
+// Commment
+
+COMMENT: /\/\/[^\n]*/
+%ignore COMMENT
+
+// Boolean
+
+BOOLEAN: "true" | "false"
+
+// Colors
+
+COLOR: /#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/
+
+// Value: a generic type for any kind of value (used for properties and variable assignments)
+
+?value: COLOR | SIGNED_INT | BOOLEAN | SIGNED_NUMBER | VARIABLE | ESCAPED_STRING
+
+// Variables
+
+VARIABLE: /@[a-zA-Z\-_]+/
+
+variable_declaration: VARIABLE ":" value ";"
+
+// Class
+
+CLASS_NAME: /[a-zA-Z\-_]+/
+CLASS_STATE_NAME: /[a-zA-Z]+/
+
+class_property: /[a-zA-Z\-_]+/ ":" value ";" -> property
+
+class_declaration: CLASS_NAME [":" CLASS_STATE_NAME] "{" [class_property*]* "}"
+
+// Main
+
+?entry: variable_declaration | class_declaration
+
+start: [entry]*

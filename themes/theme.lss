@@ -1,0 +1,23 @@
+@widget-bg-color: #525252;
+@widget-fg-color: #c4c4c4;
+
+scrollbar {
+  bgColor: @widget-bg-color;
+  padAll: 7;
+  width: 5;
+  opa: 40;
+}
+
+scrollbar: scrolled {
+  opa: 255;
+}
+
+button {
+  bgOpa: 255;
+  bgColor: @background-color;
+  shadowColor: @shadow-color;
+}
+
+theme {
+  name: "test";
+}
