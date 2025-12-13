@@ -1,5 +1,13 @@
+// Colors
 @widget-bg-color: #525252;
 @widget-fg-color: #c4c4c4;
+
+// Opacity
+@opa-cover: 255;
+
+scr {
+    bgOpa: @opa-cover;
+}
 
 scrollbar {
   bgColor: @widget-bg-color;

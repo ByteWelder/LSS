@@ -1,10 +1,14 @@
 # Create C code
 from typing import List, Dict
+from source.printing import camel_to_snake
 
 from source.models import *
 
+def variable_name_str(name: str):
+    return name[1:].replace("-", "_").upper()
+
 def variable_name(variable: Variable):
-    return variable.name[1:].replace("-", "_")
+    return variable_name_str(variable.name)
 
 # Convert a Variable value to C code
 def variable_value(variable: Variable):
@@ -60,6 +64,12 @@ class CodeGenerator:
         # Run
         self.__process(transformed)
 
+    def __resolve_value(self, value: str):
+        if value.startswith("@"):
+            return variable_name_str(value)
+        else:
+            return value
+
     def __fill_cache(self, transformed: list):
         for item in transformed:
             item_type = type(item)
@@ -78,16 +88,29 @@ class CodeGenerator:
 
     def __generate_style_declarations_code(self):
         # Style declarations
-        style_declaration_list = list()
+        lines = list()
         for style in self.__styles:
             if style.state is None:
-                style_declaration_list.append(f"\tlv_style_t {style.name};")
-        self.style_declarations_code = "\n".join(style_declaration_list)
+                lines.append(f"\tlv_style_t {style.name};")
+        self.style_declarations_code = "\n".join(lines)
+
+    def __generate_style_code(self, style: Style) -> str:
+        lines = list()
+        lines.append(f"\t// {style.name}")
+        style_variable = f"&theme->styles.{style.name}"
+        lines.append(f"\tstyle_init_reset({style_variable});")
+        for property in style.properties:
+            property_name = camel_to_snake(property.name)
+            resolved_value = self.__resolve_value(property.value)
+            lines.append(f"\tlv_style_set_{property_name}({style_variable}, {resolved_value});")
+        return "\n".join(lines)
 
     def __generate_style_init_code(self):
+        lines = list()
         for style in self.__styles:
-            # TODO
-            None
+            if style.state is None:
+                lines.append(self.__generate_style_code(style))
+        self.style_init_code = "\n\n".join(lines)
 
     def __process(self, transformed: list):
         self.__fill_cache(transformed)

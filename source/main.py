@@ -5,7 +5,6 @@ from source.files import *
 from source.templates import write_templates
 from source.transformer import LssTransformer
 
-
 def main(lss_file_path: str, verbose: bool):
     lark_data = read_file("grammar.lark")
     lss_data = read_file(lss_file_path)
