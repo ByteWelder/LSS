@@ -26,6 +26,19 @@ lv_theme_t* lv_theme_{{THEME_NAME_LOWER}}_init(
     {{INIT_FUNCTION_BODY}}
 }
 
+lv_theme_t* lv_theme_{{THEME_NAME_LOWER}}_deinit(
+    lv_theme_t* theme
+) {
+    {{DEINIT_FUNCTION_BODY}}
+}
+
+lv_theme_t* lv_theme_{{THEME_NAME_LOWER}}_apply(
+    lv_theme_t* theme,
+    lv_obj_t* obj
+) {
+    {{APPLY_FUNCTION_BODY}}
+}
+
 #ifdef __cplusplus
 extern "}"
 #endif

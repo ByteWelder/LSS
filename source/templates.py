@@ -18,7 +18,9 @@ def write_templates(code_generator, output_folder):
         "{{THEME_NAME_UPPER}}" : code_generator.theme_name.upper(),
         "{{STYLE_DECLARATIONS}}" : code_generator.style_declarations_code,
         "{{STYLE_INIT}}" : code_generator.style_init_code,
-        "{{INIT_FUNCTION_BODY}}" : "// TODO"
+        "{{INIT_FUNCTION_BODY}}" : "// TODO",
+        "{{DEINIT_FUNCTION_BODY}}" : "// TODO",
+        "{{APPLY_FUNCTION_BODY}}" : "// TODO"
     }
     theme_h_processed = templatize(theme_h_template, template_parameters)
     theme_c_processed = templatize(theme_c_template, template_parameters)

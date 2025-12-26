@@ -57,6 +57,7 @@ def variable_value(variable: Variable):
 class CodeGenerator:
     # Raw data buckets
     __styles: List[Style]
+    __classes: List[Class]
     __variables: Dict[str, Variable]
     # Outputs
     defines_code: str
@@ -67,6 +68,7 @@ class CodeGenerator:
     def __init__(self, transformed: list):
         # Raw data buckets
         self.__styles = list()
+        self.__classes = list()
         self.__variables = dict()
         self.__theme = None
         # Outputs
@@ -90,6 +92,8 @@ class CodeGenerator:
                 self.__variables[item.name] = item
             elif item_type is Style:
                 self.__styles.append(item)
+            elif item_type is Class:
+                self.__classes.append(item)
 
     def __generate_defines_code(self):
         lines = list()
