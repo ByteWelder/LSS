@@ -16,8 +16,12 @@ class Property:
 @dataclass
 class Style:
     name: str
-    state: str
     properties: list
+
+@dataclass
+class Class:
+    name: str
+    styles: dict # maps a style name onto a list of states
 
 @dataclass
 class Color:
@@ -31,7 +35,9 @@ class VariableType(Enum):
     BOOLEAN = 2,
     SIGNED_NUMBER = 3,
     VARIABLE = 4,
-    ESCAPED_STRING = 5
+    ESCAPED_STRING = 5,
+    TEXT_ALIGNMENT = 6,
+    DP = 7
 
 @dataclass
 class Variable:
@@ -52,6 +58,10 @@ def to_variable_type(text: str) -> VariableType:
         return VariableType.ESCAPED_STRING
     elif text == "VARIABLE":
         return VariableType.VARIABLE
+    elif text == "DP":
+        return VariableType.DP
+    elif text == "TEXT_ALIGNMENT":
+        return VariableType.TEXT_ALIGNMENT
     else:
         exit_with_error(f"VariableType not supported: {text}")
         return None

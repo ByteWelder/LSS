@@ -20,27 +20,54 @@ BOOLEAN: "true" | "false"
 
 COLOR: /#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/
 
+// Alignment
+
+TEXT_ALIGNMENT: "auto" | "left" | "right" | "center"
+
+// DPI measurements (density-independent pixels)
+
+DP: /[0-9]+ *dp/
 // Value: a generic type for any kind of value (used for properties and variable assignments)
 
-?value: COLOR | SIGNED_INT | BOOLEAN | SIGNED_NUMBER | VARIABLE | ESCAPED_STRING
+?value: COLOR | SIGNED_INT | BOOLEAN | SIGNED_NUMBER | VARIABLE | ESCAPED_STRING | TEXT_ALIGNMENT | DP
 
 // Variables
 
-VARIABLE: /@[a-zA-Z\-_]+/
+VARIABLE: /@[a-zA-Z0-9\-_]+/
 
 variable_declaration: VARIABLE ":" value ";"
 
-// Class
+// Parts
+
+PART: "main" | "scrollbar" | "indicator" | "knob" | "selected" | "items" | "cursor" | "customFirst" | "any"
+
+part_declaration: "part." PART
+
+// States
+
+STATE: "default" | "checked" | "focused" | "focusKey" | "edited" | "hovered" | "pressed" | "scrolled" | "disabled" | "user1" | "user2" | "user3" | "user4" | "any"
+
+state_declaration: "state." STATE
+
+// Style
+
+STYLE_NAME: /[a-zA-Z\-_]+/
+
+style_property: /[a-zA-Z\-_]+/ ":" value ";" -> property
+
+style_declaration: STYLE_NAME "{" [style_property*]* "}"
+
+// Classes (widgets)
 
 CLASS_NAME: /[a-zA-Z\-_]+/
-CLASS_STATE_NAME: /[a-zA-Z]+/
+class_style_declaration: [part_declaration | state_declaration]
+class_style_declaration_list: class_style_declaration ["," class_style_declaration]*
 
-class_property: /[a-zA-Z\-_]+/ ":" value ";" -> property
-
-class_declaration: CLASS_NAME [":" CLASS_STATE_NAME] "{" [class_property*]* "}"
+class_style: STYLE_NAME ":" ["default" | class_style_declaration_list] ";"
+class_declaration: "#" CLASS_NAME "{" class_style* "}"
 
 // Main
 
-?entry: variable_declaration | class_declaration
+?entry: variable_declaration | style_declaration | class_declaration
 
 start: [entry]*

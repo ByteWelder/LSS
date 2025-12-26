@@ -1,31 +1,214 @@
 // Colors
-@widget-bg-color: #525252;
-@widget-fg-color: #c4c4c4;
 
-// Opacity
+@color-primary: #3D91FF;
+@color-secondary: #C9372C;
+
+// lv_theme_default.c line 30
+@color-scr: #15171A;
+@color-card: #282B30;
+@color-text: #FAFAFA;
+@color-grey: #2F3237;
+
+@opa-20: 51;
+@opa-40: 102;
+@opa-50: 127;
 @opa-cover: 255;
 
-scr {
+@border-width: 2dp;
+@outline-width: 3dp;
+
+@huge-radius: 32767;
+@default-radius: 8dp;
+
+@default-border-width: 2dp;
+
+// TODO: display size dependent
+@pad-def: 20dp;
+@pad-small: 12dp;
+@pad-tiny: 6dp;
+
+// line 231
+scrollbar {
+    bgColor: #424242;
+    radius: @huge-radius;
+    padAll: 7dp;
+    width: 5dp;
+    bgOpa: @opa-40;
+}
+
+scrollbar_scrolled {
     bgOpa: @opa-cover;
 }
 
-scrollbar {
-  bgColor: @widget-bg-color;
-  padAll: 7;
-  width: 5;
-  opa: 40;
+// line 244
+scr {
+    bgOpa: @opa-cover;
+    bgColor: @colort-scr;
+    textColor: @color-text;
+    // TODO: textFont: normal;
+    padRow: @pad-small;
+    padColumn: @pad-small;
+    // TODO: rotarySensitivity: dpi / 4 * 256
 }
 
-scrollbar: scrolled {
-  opa: 255;
+card {
+    radius: @default-radius;
+    bgOpa: @opa-cover;
+    bgColor: @color-card;
+    borderColor: @color-grey;
+    borderWidth: @default-border-width;
+    borderPost: true;
+    textColor: @color-text;
+    padAll: @pad-def;
+    padRow: @pad-small;
+    padColumn: @pad-small;
+    lineColor: #9E9E9E;
+    lineWidth: 1dp;
 }
 
-button {
-  bgOpa: 255;
-  bgColor: @background-color;
-  shadowColor: @shadow-color;
+outline_primary {
+    outlineColor: @color-primary;
+    outlineWidth: @outline-width;
+    outlinePad: @outline-width;
+    outlineOpa: @opa-50;
 }
 
-theme {
-  name: "test";
+outline_secondary {
+    outlineColor: @color-secondary;
+    outlineWidth: @outline-width;
+    outlineOpa: @opa-50;
+}
+
+btn {
+    bgOpa: @opa-cover;
+    bgColor: @color-grey;
+    textColor: @color-text;
+    padHor: @pad-def;
+    padVer: @pad-small;
+    padColumn: 5dp;
+    padRow: 5dp;
+}
+
+pressed {
+    recolor: #000;
+    recolorOpa: 35;
+}
+
+disabled {
+    recolor: #616161;
+    recolorOpa: @opa-50;
+}
+
+clip_corner {
+    clipCorner: true;
+    borderPost: true;
+}
+
+pad_normal {
+    padAll: @pad-def;
+    padRow: @pad-def;
+    padColumn: @pad-def;
+}
+
+pad_small {
+    padAll: @pad-small;
+    padGap: @pad-small;
+}
+
+pad_gap {
+    padRow: 10dp;
+    padColumn: 10dp;
+}
+
+line_space_large {
+    textLineSpace: 20dp;
+}
+
+text_align_center {
+    textAlign: center;
+}
+
+pad_zero {
+    padAll: 0dp;
+    padRow: 0dp;
+    padColumn: 0dp;
+}
+
+pad_tiny {
+    padAll: @pad-tiny;
+    padRow: @pad-tiny;
+    padColumn: @pad-tiny;
+}
+
+bg_color_primary {
+    bgColor: @color-primary;
+    bgOpa: @opa-cover;
+    textColor: #FFF;
+}
+
+bg_color_primary_muted {
+    bgColor: @color-primary;
+    bgOpa: @opa-20;
+    textColor: @color-primary;
+}
+
+bg_color_secondary {
+    bgColor: @color-secondary;
+    bgOpa: @opa-cover;
+    textColor: #FFF;
+}
+
+bg_color_secondary_muted {
+    bgColor: @color-secondary;
+    bgOpa: @opa-20;
+    textColor: @color-secondary;
+}
+
+bg_color_grey {
+    bgColor: @color-grey;
+    bgOpa: @opa-cover;
+    textColor: @color-text;
+}
+
+bg_color_white {
+    bgColor: @color-card;
+    bgOpa: @opa-cover;
+    textColor: @color-text;
+}
+
+circle {
+    radius: @radius-circle;
+}
+
+no_radius {
+    radius: 0;
+}
+
+rotary_scroll {
+    // TODO: rotarySensitivity: dpi / 4 * 256
+}
+
+grow {
+    transformWidth: 3dp;
+    transformHeight: 3dp;
+}
+
+knob {
+    bgColor: @color-primary;
+    bgOpa: @opa-cover;
+    padAll: 6dp;
+    radius: @radius-circle;
+}
+
+anim {
+    animDuration: 200;
+}
+
+#global {
+    scr: default;
+    scrollbar: part.scrollbar;
+    scrollbar_scrolled: part.scrollbar, state.scrolled;
+}
+
+#obj {
 }

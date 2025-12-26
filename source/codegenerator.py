@@ -18,6 +18,20 @@ def variable_value(variable: Variable):
         return variable.value
     elif variable.type == VariableType.SIGNED_NUMBER:
         return variable.value
+    elif variable.type == VariableType.TEXT_ALIGNMENT:
+        if variable.value == "auto":
+            return "LV_TEXT_ALIGN_AUTO"
+        elif variable.value == "center":
+            return "LV_TEXT_ALIGN_CENTER"
+        elif variable.value == "left":
+            return "LV_TEXT_ALIGN_LEFT"
+        elif variable.value == "right":
+            return "LV_TEXT_ALIGN_RIGHT"
+        else:
+            exit_with_error(f"Unsupported text alignment: {variable.value}")
+    elif variable.type == VariableType.DP:
+        # TODO: Multi-display support
+        return f"LV_DPX(${variable.value})"
     elif variable.type == VariableType.COLOR:
         hex_value = variable.value.lstrip("#")
         hex_value_len = len(hex_value)
@@ -44,7 +58,6 @@ class CodeGenerator:
     # Raw data buckets
     __styles: List[Style]
     __variables: Dict[str, Variable]
-    __theme: Theme
     # Outputs
     defines_code: str
     style_declarations_code: str
@@ -60,7 +73,7 @@ class CodeGenerator:
         self.defines_code = ""
         self.style_declarations_code = ""
         self.style_init_code = ""
-        self.theme_name = None
+        self.theme_name = ""
         # Run
         self.__process(transformed)
 
@@ -77,8 +90,6 @@ class CodeGenerator:
                 self.__variables[item.name] = item
             elif item_type is Style:
                 self.__styles.append(item)
-            elif item_type is Theme:
-                self.__theme = item
 
     def __generate_defines_code(self):
         lines = list()
@@ -87,11 +98,9 @@ class CodeGenerator:
         self.defines_code = "\n".join(lines)
 
     def __generate_style_declarations_code(self):
-        # Style declarations
         lines = list()
         for style in self.__styles:
-            if style.state is None:
-                lines.append(f"\tlv_style_t {style.name};")
+            lines.append(f"\tlv_style_t {style.name};")
         self.style_declarations_code = "\n".join(lines)
 
     def __generate_style_code(self, style: Style) -> str:
@@ -108,8 +117,7 @@ class CodeGenerator:
     def __generate_style_init_code(self):
         lines = list()
         for style in self.__styles:
-            if style.state is None:
-                lines.append(self.__generate_style_code(style))
+            lines.append(self.__generate_style_code(style))
         self.style_init_code = "\n\n".join(lines)
 
     def __process(self, transformed: list):
@@ -117,4 +125,4 @@ class CodeGenerator:
         self.__generate_defines_code()
         self.__generate_style_declarations_code()
         self.__generate_style_init_code()
-        self.theme_name = self.__theme.name
+        self.theme_name = "test" # TODO
