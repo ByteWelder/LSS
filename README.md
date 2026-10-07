@@ -1,6 +1,6 @@
 # LSS
 
-LSS stands for "LVGL Style Sheets"
+LSS stands for "LVGL Style Sheet"
 
 It's a content-driven theme generator for LVGL.
 
