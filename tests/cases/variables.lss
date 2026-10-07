@@ -1,0 +1,9 @@
+@theme variables;
+
+@number: 123;
+@negative-number: -123;
+@float: 1.5;
+@boolean: true;
+@color: #FF0000;
+@reference: @number;
+@expression: @number * 2;

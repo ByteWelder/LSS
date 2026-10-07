@@ -1,0 +1,24 @@
+// Compile-time conditions: @cif (MACRO) becomes #if MACRO
+@theme cif;
+
+@cif (MY_FEATURE) {
+    @feature-size: 4dp;
+
+    feature {
+        width: @feature-size;
+    }
+}
+
+card {
+    radius: 0;
+    @cif (MY_BORDER) {
+        borderWidth: 1;
+    }
+}
+
+apply(obj) {
+    card: default;
+    @cif (MY_FEATURE) {
+        feature: state.pressed;
+    }
+}

@@ -1,0 +1,28 @@
+@theme apply_if;
+
+@config {
+    isDark: bool = false;
+}
+
+pad_small {
+    padAll: 4dp;
+}
+
+pad_large {
+    padAll: 8dp;
+}
+
+shadow {
+    shadowWidth: 2dp;
+}
+
+apply(keyboard) {
+    @if (display(large)) {
+        pad_large: default;
+    } @else {
+        pad_small: default;
+    }
+    @if (!$isDark) {
+        shadow: default;
+    }
+}

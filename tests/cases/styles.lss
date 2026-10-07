@@ -1,0 +1,19 @@
+@theme styles;
+
+@pad: 4dp;
+
+empty {
+}
+
+card {
+    bgOpa: cover;
+    bgColor: #282B30;
+    padAll: @pad;
+    borderPost: true;
+    size: 8dp, 8dp;
+}
+
+apply(obj) {
+    empty: default;
+    card: default;
+}

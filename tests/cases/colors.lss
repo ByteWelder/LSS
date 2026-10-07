@@ -1,0 +1,11 @@
+@theme colors;
+
+@hex: #15171a;
+@short-hex: #FA0;
+@white: white;
+@black: black;
+@palette: palette(blue-grey);
+@lighten: lighten(grey, 4);
+@darken: darken(deep-orange, 2);
+@mix: mix(white, #6750A4, 10%);
+@contrast: contrast(#00BBFF);

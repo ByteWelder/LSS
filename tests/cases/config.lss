@@ -1,0 +1,10 @@
+@theme config;
+
+@config {
+    isDark: bool = false;
+    colorPrimary: color = palette(blue);
+    colorSecondary: color;
+    count: int = 3;
+    opacity: opa = 50%;
+    font: font = raw("LV_FONT_DEFAULT");
+}

@@ -2,20 +2,21 @@
 
 #define LV_USE_PRIVATE_API 1 /* For lv_theme_t */
 
-#include "lv_theme_{{THEME_NAME_LOWER}}.h"
+#include "lv_theme_apply_selectors.h"
 
 /*********************
  *      DEFINES
  *********************/
 
-{{DEFINES}}
+
 
 /**********************
  *      TYPEDEFS
  **********************/
 
 typedef struct {
-{{STYLE_FIELDS}}
+    lv_style_t scr;
+    lv_style_t card;
 } my_theme_styles_t;
 
 typedef enum {
@@ -28,10 +29,10 @@ typedef struct {
     lv_theme_t base;
     disp_size_t disp_size;
     int32_t disp_dpi;
-    lv_theme_{{THEME_NAME_LOWER}}_config_t config;
+    lv_theme_apply_selectors_config_t config;
     bool inited;
     my_theme_styles_t styles;
-{{TRANSITION_FIELDS}}
+
 } my_theme_t;
 
 /**********************
@@ -66,28 +67,34 @@ static inline bool lss_is_child(lv_obj_t * parent, int32_t index, lv_obj_t * chi
     return parent != NULL && lv_obj_get_child(parent, index) == child;
 }
 
-static bool config_equals(const lv_theme_{{THEME_NAME_LOWER}}_config_t * a, const lv_theme_{{THEME_NAME_LOWER}}_config_t * b)
+static bool config_equals(const lv_theme_apply_selectors_config_t * a, const lv_theme_apply_selectors_config_t * b)
 {
-{{CONFIG_EQUALS}}
+    LV_UNUSED(a);
+    LV_UNUSED(b);
+    return true;
 }
 
 static void style_init(my_theme_t * theme)
 {
-{{STYLE_INIT}}
+    style_init_reset(&theme->styles.scr);
+    lv_style_set_bg_opa(&theme->styles.scr, LV_OPA_COVER);
+
+    style_init_reset(&theme->styles.card);
+    lv_style_set_radius(&theme->styles.card, LV_DPX_CALC(theme->disp_dpi, 4));
 }
 
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
 
-void lv_theme_{{THEME_NAME_LOWER}}_config_init(lv_theme_{{THEME_NAME_LOWER}}_config_t * config)
+void lv_theme_apply_selectors_config_init(lv_theme_apply_selectors_config_t * config)
 {
-{{CONFIG_INIT}}
+    lv_memzero(config, sizeof(*config));
 }
 
-lv_theme_t * lv_theme_{{THEME_NAME_LOWER}}_init(lv_display_t * disp, const lv_theme_{{THEME_NAME_LOWER}}_config_t * config)
+lv_theme_t * lv_theme_apply_selectors_init(lv_display_t * disp, const lv_theme_apply_selectors_config_t * config)
 {
-    if(!lv_theme_{{THEME_NAME_LOWER}}_is_inited()) {
+    if(!lv_theme_apply_selectors_is_inited()) {
         theme_def = lv_malloc_zeroed(sizeof(my_theme_t));
         LV_ASSERT_MALLOC(theme_def);
     }
@@ -115,7 +122,9 @@ lv_theme_t * lv_theme_{{THEME_NAME_LOWER}}_init(lv_display_t * disp, const lv_th
     theme->config = *config;
     theme->base.disp = new_disp;
     theme->base.apply_cb = theme_apply;
-{{CONFIG_BASE}}
+    theme->base.font_small = LV_FONT_DEFAULT;
+    theme->base.font_normal = LV_FONT_DEFAULT;
+    theme->base.font_large = LV_FONT_DEFAULT;
 
     style_init(theme);
 
@@ -132,20 +141,20 @@ lv_theme_t * lv_theme_{{THEME_NAME_LOWER}}_init(lv_display_t * disp, const lv_th
     return (lv_theme_t *) theme;
 }
 
-bool lv_theme_{{THEME_NAME_LOWER}}_is_inited(void)
+bool lv_theme_apply_selectors_is_inited(void)
 {
     return theme_def != NULL && theme_def->inited;
 }
 
-lv_theme_t * lv_theme_{{THEME_NAME_LOWER}}_get(void)
+lv_theme_t * lv_theme_apply_selectors_get(void)
 {
-    if(!lv_theme_{{THEME_NAME_LOWER}}_is_inited()) {
+    if(!lv_theme_apply_selectors_is_inited()) {
         return NULL;
     }
     return (lv_theme_t *) theme_def;
 }
 
-void lv_theme_{{THEME_NAME_LOWER}}_deinit(void)
+void lv_theme_apply_selectors_deinit(void)
 {
     my_theme_t * theme = theme_def;
     if(theme) {
@@ -174,12 +183,69 @@ static void theme_apply(lv_theme_t * th, lv_obj_t * obj)
     LV_UNUSED(theme);
     LV_UNUSED(parent);
 
-{{APPLY}}
+    /* null > * */
+    if(parent == NULL) {
+        lv_obj_add_style(obj, &theme->styles.scr, 0);
+        return;
+    }
+    if(lv_obj_check_type(obj, &lv_obj_class)) {
+#if LV_USE_TABVIEW
+        /* tabview > obj[1] */
+        if(lv_obj_check_type(parent, &lv_tabview_class) && lss_is_child(parent, 1, obj)) {
+            return;
+        }
+#endif
+#if LV_USE_WIN
+        /* win > obj[0] */
+        if(lv_obj_check_type(parent, &lv_win_class) && lss_is_child(parent, 0, obj)) {
+            lv_obj_add_style(obj, &theme->styles.card, 0);
+            return;
+        }
+#endif
+#if LV_USE_TABVIEW
+        /* tabview > * > obj */
+        if(lv_obj_check_type(lss_ancestor(obj, 2), &lv_tabview_class)) {
+            lv_obj_add_style(obj, &theme->styles.card, 0);
+            return;
+        }
+#endif
+        /* obj */
+        lv_obj_add_style(obj, &theme->styles.card, 0);
+        return;
+    }
+#if LV_USE_BUTTON
+    if(lv_obj_check_type(obj, &lv_button_class)) {
+#if LV_USE_TABVIEW
+        /* tabview > *[0] > button */
+        if(lv_obj_check_type(lss_ancestor(obj, 2), &lv_tabview_class) && lss_is_child(lss_ancestor(obj, 2), 0, parent)) {
+            lv_obj_add_style(obj, &theme->styles.card, LV_STATE_CHECKED);
+            return;
+        }
+#endif
+        /* button */
+        lv_obj_add_style(obj, &theme->styles.card, 0);
+        return;
+    }
+#endif
+#if LV_USE_MENU
+    if(lv_obj_check_type(obj, &lv_menu_sidebar_header_cont_class)) {
+        /* menu_sidebar_header_cont */
+        lv_obj_add_style(obj, &theme->styles.card, 0);
+        return;
+    }
+#endif
+#if LV_USE_MENU
+    if(lv_obj_check_type(obj, &lv_menu_main_header_cont_class)) {
+        /* menu_main_header_cont */
+        lv_obj_add_style(obj, &theme->styles.card, 0);
+        return;
+    }
+#endif
 }
 
 static void style_init_reset(lv_style_t * style)
 {
-    if(lv_theme_{{THEME_NAME_LOWER}}_is_inited()) {
+    if(lv_theme_apply_selectors_is_inited()) {
         lv_style_reset(style);
     }
     else {
@@ -191,5 +257,5 @@ static void resolution_change_event_cb(lv_event_t * e)
 {
     lv_display_t * disp = lv_event_get_target(e);
     my_theme_t * theme = lv_event_get_user_data(e);
-    lv_theme_{{THEME_NAME_LOWER}}_init(disp, &theme->config);
+    lv_theme_apply_selectors_init(disp, &theme->config);
 }

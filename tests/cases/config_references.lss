@@ -1,0 +1,18 @@
+@theme config_references;
+
+@config {
+    isDark: bool = false;
+    colorPrimary: color = palette(blue);
+}
+
+@text-color: if($isDark, white, black);
+@inverted: if(!$isDark && display(large), 1, 0);
+
+primary {
+    bgColor: $colorPrimary;
+    textColor: @text-color;
+}
+
+apply(obj) {
+    primary: default;
+}

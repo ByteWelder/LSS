@@ -1,0 +1,9 @@
+@theme functions;
+
+@symbol: symbol(ok);
+@raw: raw("LV_DPX(4)");
+@percentage: pct(50);
+@by-size: by-size(8dp, 12dp, 16dp);
+@dpi: dpi / 4 * 256;
+@dpi-default: dpi-def * 2;
+@display: if(display(small), 1, 2);

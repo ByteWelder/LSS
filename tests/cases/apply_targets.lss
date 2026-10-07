@@ -1,0 +1,18 @@
+// Parts and states
+@theme apply_targets;
+
+style {
+    radius: 0;
+}
+
+apply(obj) {
+    style: default;
+    style: part.main;
+    style: part.scrollbar;
+    style: state.pressed;
+    style: part.scrollbar, state.scrolled;
+    style: part.items, state.focusKey;
+    style: part.textareaPlaceholder;
+    style: state.user1;
+    style: state.pressed, state.checked;
+}

@@ -1,73 +1,98 @@
-%import common.DIGIT -> DIGIT
-%import common.LETTER -> LETTER
-%import common.HEXDIGIT -> HEXDIGIT
-%import common.SIGNED_INT -> SIGNED_INT
-%import common.WS -> WS
-%import common.SIGNED_NUMBER -> SIGNED_NUMBER
-%import common.ESCAPED_STRING -> ESCAPED_STRING
-%ignore WS
+// LSS grammar (LALR)
 
-// Commment
+%import common.WS
+%import common.ESCAPED_STRING -> STRING
+%ignore WS
 
 COMMENT: /\/\/[^\n]*/
 %ignore COMMENT
 
-// Boolean
+// Identifiers may contain hyphens between word parts, like CSS: "by-size", "blue-grey"
+NAME: /[a-zA-Z_][a-zA-Z0-9_]*(-[a-zA-Z_][a-zA-Z0-9_]*)*/
+VARIABLE: /@[a-zA-Z_][a-zA-Z0-9_]*(-[a-zA-Z0-9_]+)*/
+CONFIG_REF: /\$[a-zA-Z_][a-zA-Z0-9_]*/
+COLOR: /#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})\b/
+DP.2: /\d+dp\b/
+PERCENT.2: /\d+%/
+NUMBER: /\d+(\.\d+)?/
 
-BOOLEAN: "true" | "false"
+start: entry*
 
-// Colors
+?entry: theme_decl
+      | config_decl
+      | variable_decl
+      | transition_decl
+      | style_decl
+      | apply_decl
+      | widget_decl
+      | cif_entries
 
-COLOR: /#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/
+theme_decl: "@theme" NAME ";"
 
-// Alignment
+// A widget class that isn't part of LVGL: @widget <type>: <class symbol>;
+widget_decl: "@widget" NAME ":" NAME ";"
 
-TEXT_ALIGNMENT: "auto" | "left" | "right" | "center"
+config_decl: "@config" "{" config_field* "}"
+config_field: NAME ":" NAME ["=" expr] ";"
 
-// DPI measurements (density-independent pixels)
+variable_decl: VARIABLE ":" expr ";"
 
-DP: /[0-9]+ *dp/
-// Value: a generic type for any kind of value (used for properties and variable assignments)
+transition_decl: "@transition" NAME "{" property* "}"
 
-?value: COLOR | SIGNED_INT | BOOLEAN | SIGNED_NUMBER | VARIABLE | ESCAPED_STRING | TEXT_ALIGNMENT | DP
+cif_entries: "@cif" "(" NAME ")" "{" entry* "}"
 
-// Variables
+// Styles
 
-VARIABLE: /@[a-zA-Z0-9\-_]+/
+style_decl: NAME "{" style_item* "}"
+?style_item: property | style_if | style_cif
+property: NAME ":" expr ("," expr)* ";"
+style_if: "@if" "(" expr ")" "{" style_item* "}" [style_else]
+style_else: "@else" "{" style_item* "}"
+style_cif: "@cif" "(" NAME ")" "{" style_item* "}"
 
-variable_declaration: VARIABLE ":" value ";"
+// Apply rules
 
-// Parts
+apply_decl: "apply" "(" selector ("," selector)* ")" "{" apply_item* "}"
+selector: compound (">" compound)*
+?compound: NAME ["[" NUMBER "]"]            -> compound_named
+         | "*" ["[" NUMBER "]"]             -> compound_any
 
-PART: "main" | "scrollbar" | "indicator" | "knob" | "selected" | "items" | "cursor" | "customFirst" | "any"
+?apply_item: apply_style | apply_include | apply_if | apply_cif
+apply_style: NAME ":" target ("," target)* ";"
+target: NAME ["." NAME]
+apply_include: "@include" selector ";"
+apply_if: "@if" "(" expr ")" "{" apply_item* "}" [apply_else]
+apply_else: "@else" "{" apply_item* "}"
+apply_cif: "@cif" "(" NAME ")" "{" apply_item* "}"
 
-part_declaration: "part." PART
+// Expressions
 
-// States
-
-STATE: "default" | "checked" | "focused" | "focusKey" | "edited" | "hovered" | "pressed" | "scrolled" | "disabled" | "user1" | "user2" | "user3" | "user4" | "any"
-
-state_declaration: "state." STATE
-
-// Style
-
-STYLE_NAME: /[a-zA-Z\-_]+/
-
-style_property: /[a-zA-Z\-_]+/ ":" value ";" -> property
-
-style_declaration: STYLE_NAME "{" [style_property*]* "}"
-
-// Classes (widgets)
-
-CLASS_NAME: /[a-zA-Z\-_]+/
-class_style_declaration: [part_declaration | state_declaration]
-class_style_declaration_list: class_style_declaration ["," class_style_declaration]*
-
-class_style: STYLE_NAME ":" ["default" | class_style_declaration_list] ";"
-class_declaration: "#" CLASS_NAME "{" class_style* "}"
-
-// Main
-
-?entry: variable_declaration | style_declaration | class_declaration
-
-start: [entry]*
+?expr: or_expr
+?or_expr: and_expr
+        | or_expr "||" and_expr              -> or_op
+?and_expr: cmp_expr
+         | and_expr "&&" cmp_expr            -> and_op
+?cmp_expr: bitor_expr
+         | bitor_expr "==" bitor_expr        -> eq
+         | bitor_expr "!=" bitor_expr        -> ne
+?bitor_expr: sum
+           | bitor_expr "|" sum              -> bitor
+?sum: product
+    | sum "+" product                        -> add
+    | sum "-" product                        -> sub
+?product: unary
+        | product "*" unary                  -> mul
+        | product "/" unary                  -> div
+?unary: "-" unary                            -> neg
+      | "!" unary                            -> not_op
+      | atom
+?atom: DP                                    -> dp
+     | PERCENT                               -> percent
+     | NUMBER                                -> number
+     | COLOR                                 -> color
+     | VARIABLE                              -> var_ref
+     | CONFIG_REF                            -> config_ref
+     | STRING                                -> string
+     | NAME "(" [expr ("," expr)*] ")"       -> call
+     | NAME                                  -> ident
+     | "(" expr ")"

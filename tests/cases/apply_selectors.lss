@@ -1,0 +1,43 @@
+@theme apply_selectors;
+
+scr {
+    bgOpa: cover;
+}
+
+card {
+    radius: 4dp;
+}
+
+apply(null > *) {
+    // Objects without a parent (screens)
+    scr: default;
+}
+
+apply(tabview > obj[1]) {
+    // Second child of a tabview: no styles
+}
+
+apply(win > obj[0]) {
+    card: default;
+}
+
+apply(tabview > * > obj) {
+    // Grandchild of a tabview
+    card: default;
+}
+
+apply(tabview > *[0] > button) {
+    card: state.checked;
+}
+
+apply(obj) {
+    card: default;
+}
+
+apply(button) {
+    card: default;
+}
+
+apply(menu_sidebar_header_cont, menu_main_header_cont) {
+    card: default;
+}

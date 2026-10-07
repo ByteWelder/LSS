@@ -2,20 +2,25 @@
 
 #define LV_USE_PRIVATE_API 1 /* For lv_theme_t */
 
-#include "lv_theme_{{THEME_NAME_LOWER}}.h"
+#include "lv_theme_cif.h"
 
 /*********************
  *      DEFINES
  *********************/
 
-{{DEFINES}}
+#if MY_FEATURE
+#define FEATURE_SIZE (LV_DPX_CALC(theme->disp_dpi, 4))
+#endif
 
 /**********************
  *      TYPEDEFS
  **********************/
 
 typedef struct {
-{{STYLE_FIELDS}}
+#if MY_FEATURE
+    lv_style_t feature;
+#endif
+    lv_style_t card;
 } my_theme_styles_t;
 
 typedef enum {
@@ -28,10 +33,10 @@ typedef struct {
     lv_theme_t base;
     disp_size_t disp_size;
     int32_t disp_dpi;
-    lv_theme_{{THEME_NAME_LOWER}}_config_t config;
+    lv_theme_cif_config_t config;
     bool inited;
     my_theme_styles_t styles;
-{{TRANSITION_FIELDS}}
+
 } my_theme_t;
 
 /**********************
@@ -66,28 +71,39 @@ static inline bool lss_is_child(lv_obj_t * parent, int32_t index, lv_obj_t * chi
     return parent != NULL && lv_obj_get_child(parent, index) == child;
 }
 
-static bool config_equals(const lv_theme_{{THEME_NAME_LOWER}}_config_t * a, const lv_theme_{{THEME_NAME_LOWER}}_config_t * b)
+static bool config_equals(const lv_theme_cif_config_t * a, const lv_theme_cif_config_t * b)
 {
-{{CONFIG_EQUALS}}
+    LV_UNUSED(a);
+    LV_UNUSED(b);
+    return true;
 }
 
 static void style_init(my_theme_t * theme)
 {
-{{STYLE_INIT}}
+#if MY_FEATURE
+    style_init_reset(&theme->styles.feature);
+    lv_style_set_width(&theme->styles.feature, FEATURE_SIZE);
+#endif
+
+    style_init_reset(&theme->styles.card);
+    lv_style_set_radius(&theme->styles.card, 0);
+#if MY_BORDER
+    lv_style_set_border_width(&theme->styles.card, 1);
+#endif
 }
 
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
 
-void lv_theme_{{THEME_NAME_LOWER}}_config_init(lv_theme_{{THEME_NAME_LOWER}}_config_t * config)
+void lv_theme_cif_config_init(lv_theme_cif_config_t * config)
 {
-{{CONFIG_INIT}}
+    lv_memzero(config, sizeof(*config));
 }
 
-lv_theme_t * lv_theme_{{THEME_NAME_LOWER}}_init(lv_display_t * disp, const lv_theme_{{THEME_NAME_LOWER}}_config_t * config)
+lv_theme_t * lv_theme_cif_init(lv_display_t * disp, const lv_theme_cif_config_t * config)
 {
-    if(!lv_theme_{{THEME_NAME_LOWER}}_is_inited()) {
+    if(!lv_theme_cif_is_inited()) {
         theme_def = lv_malloc_zeroed(sizeof(my_theme_t));
         LV_ASSERT_MALLOC(theme_def);
     }
@@ -115,7 +131,9 @@ lv_theme_t * lv_theme_{{THEME_NAME_LOWER}}_init(lv_display_t * disp, const lv_th
     theme->config = *config;
     theme->base.disp = new_disp;
     theme->base.apply_cb = theme_apply;
-{{CONFIG_BASE}}
+    theme->base.font_small = LV_FONT_DEFAULT;
+    theme->base.font_normal = LV_FONT_DEFAULT;
+    theme->base.font_large = LV_FONT_DEFAULT;
 
     style_init(theme);
 
@@ -132,20 +150,20 @@ lv_theme_t * lv_theme_{{THEME_NAME_LOWER}}_init(lv_display_t * disp, const lv_th
     return (lv_theme_t *) theme;
 }
 
-bool lv_theme_{{THEME_NAME_LOWER}}_is_inited(void)
+bool lv_theme_cif_is_inited(void)
 {
     return theme_def != NULL && theme_def->inited;
 }
 
-lv_theme_t * lv_theme_{{THEME_NAME_LOWER}}_get(void)
+lv_theme_t * lv_theme_cif_get(void)
 {
-    if(!lv_theme_{{THEME_NAME_LOWER}}_is_inited()) {
+    if(!lv_theme_cif_is_inited()) {
         return NULL;
     }
     return (lv_theme_t *) theme_def;
 }
 
-void lv_theme_{{THEME_NAME_LOWER}}_deinit(void)
+void lv_theme_cif_deinit(void)
 {
     my_theme_t * theme = theme_def;
     if(theme) {
@@ -174,12 +192,19 @@ static void theme_apply(lv_theme_t * th, lv_obj_t * obj)
     LV_UNUSED(theme);
     LV_UNUSED(parent);
 
-{{APPLY}}
+    if(lv_obj_check_type(obj, &lv_obj_class)) {
+        /* obj */
+        lv_obj_add_style(obj, &theme->styles.card, 0);
+#if MY_FEATURE
+        lv_obj_add_style(obj, &theme->styles.feature, LV_STATE_PRESSED);
+#endif
+        return;
+    }
 }
 
 static void style_init_reset(lv_style_t * style)
 {
-    if(lv_theme_{{THEME_NAME_LOWER}}_is_inited()) {
+    if(lv_theme_cif_is_inited()) {
         lv_style_reset(style);
     }
     else {
@@ -191,5 +216,5 @@ static void resolution_change_event_cb(lv_event_t * e)
 {
     lv_display_t * disp = lv_event_get_target(e);
     my_theme_t * theme = lv_event_get_user_data(e);
-    lv_theme_{{THEME_NAME_LOWER}}_init(disp, &theme->config);
+    lv_theme_cif_init(disp, &theme->config);
 }

@@ -1,0 +1,7 @@
+// A comment on its own line
+@theme comments; // A comment after a declaration
+
+// Separated
+
+// comment
+@value: 1; // Trailing comment

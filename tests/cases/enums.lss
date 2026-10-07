@@ -1,0 +1,16 @@
+@theme enums;
+
+enums {
+    borderSide: top | bottom;
+    textAlign: center;
+    textDecor: underline;
+    baseDir: rtl;
+    bgGradDir: ver;
+    blendMode: additive;
+    radius: circle;
+    width: content;
+}
+
+apply(obj) {
+    enums: default;
+}

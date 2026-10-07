@@ -1,0 +1,7 @@
+@theme opacity;
+
+@percent: 40%;
+@uneven-percent: 35%;
+@function: opa(50);
+@transparent: transp;
+@cover: cover;

@@ -1,0 +1,8 @@
+// fontSmall, fontNormal and fontLarge are stored in lv_theme_t
+@theme config_fonts;
+
+@config {
+    fontSmall: font;
+    fontNormal: font;
+    fontLarge: font;
+}

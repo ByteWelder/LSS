@@ -2,20 +2,28 @@
 
 #define LV_USE_PRIVATE_API 1 /* For lv_theme_t */
 
-#include "lv_theme_{{THEME_NAME_LOWER}}.h"
+#include "lv_theme_colors.h"
 
 /*********************
  *      DEFINES
  *********************/
 
-{{DEFINES}}
+#define HEX lv_color_hex(0x15171A)
+#define SHORT_HEX lv_color_hex(0xFFAA00)
+#define WHITE lv_color_white()
+#define BLACK lv_color_black()
+#define PALETTE (lv_palette_main(LV_PALETTE_BLUE_GREY))
+#define LIGHTEN (lv_palette_lighten(LV_PALETTE_GREY, 4))
+#define DARKEN (lv_palette_darken(LV_PALETTE_DEEP_ORANGE, 2))
+#define MIX (lv_color_mix(lv_color_white(), lv_color_hex(0x6750A4), LV_OPA_10))
+#define CONTRAST (lv_color_luminance(lv_color_hex(0x00BBFF)) > 128 ? lv_color_black() : lv_color_white())
 
 /**********************
  *      TYPEDEFS
  **********************/
 
 typedef struct {
-{{STYLE_FIELDS}}
+
 } my_theme_styles_t;
 
 typedef enum {
@@ -28,10 +36,10 @@ typedef struct {
     lv_theme_t base;
     disp_size_t disp_size;
     int32_t disp_dpi;
-    lv_theme_{{THEME_NAME_LOWER}}_config_t config;
+    lv_theme_colors_config_t config;
     bool inited;
     my_theme_styles_t styles;
-{{TRANSITION_FIELDS}}
+
 } my_theme_t;
 
 /**********************
@@ -66,28 +74,30 @@ static inline bool lss_is_child(lv_obj_t * parent, int32_t index, lv_obj_t * chi
     return parent != NULL && lv_obj_get_child(parent, index) == child;
 }
 
-static bool config_equals(const lv_theme_{{THEME_NAME_LOWER}}_config_t * a, const lv_theme_{{THEME_NAME_LOWER}}_config_t * b)
+static bool config_equals(const lv_theme_colors_config_t * a, const lv_theme_colors_config_t * b)
 {
-{{CONFIG_EQUALS}}
+    LV_UNUSED(a);
+    LV_UNUSED(b);
+    return true;
 }
 
 static void style_init(my_theme_t * theme)
 {
-{{STYLE_INIT}}
+
 }
 
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
 
-void lv_theme_{{THEME_NAME_LOWER}}_config_init(lv_theme_{{THEME_NAME_LOWER}}_config_t * config)
+void lv_theme_colors_config_init(lv_theme_colors_config_t * config)
 {
-{{CONFIG_INIT}}
+    lv_memzero(config, sizeof(*config));
 }
 
-lv_theme_t * lv_theme_{{THEME_NAME_LOWER}}_init(lv_display_t * disp, const lv_theme_{{THEME_NAME_LOWER}}_config_t * config)
+lv_theme_t * lv_theme_colors_init(lv_display_t * disp, const lv_theme_colors_config_t * config)
 {
-    if(!lv_theme_{{THEME_NAME_LOWER}}_is_inited()) {
+    if(!lv_theme_colors_is_inited()) {
         theme_def = lv_malloc_zeroed(sizeof(my_theme_t));
         LV_ASSERT_MALLOC(theme_def);
     }
@@ -115,7 +125,9 @@ lv_theme_t * lv_theme_{{THEME_NAME_LOWER}}_init(lv_display_t * disp, const lv_th
     theme->config = *config;
     theme->base.disp = new_disp;
     theme->base.apply_cb = theme_apply;
-{{CONFIG_BASE}}
+    theme->base.font_small = LV_FONT_DEFAULT;
+    theme->base.font_normal = LV_FONT_DEFAULT;
+    theme->base.font_large = LV_FONT_DEFAULT;
 
     style_init(theme);
 
@@ -132,20 +144,20 @@ lv_theme_t * lv_theme_{{THEME_NAME_LOWER}}_init(lv_display_t * disp, const lv_th
     return (lv_theme_t *) theme;
 }
 
-bool lv_theme_{{THEME_NAME_LOWER}}_is_inited(void)
+bool lv_theme_colors_is_inited(void)
 {
     return theme_def != NULL && theme_def->inited;
 }
 
-lv_theme_t * lv_theme_{{THEME_NAME_LOWER}}_get(void)
+lv_theme_t * lv_theme_colors_get(void)
 {
-    if(!lv_theme_{{THEME_NAME_LOWER}}_is_inited()) {
+    if(!lv_theme_colors_is_inited()) {
         return NULL;
     }
     return (lv_theme_t *) theme_def;
 }
 
-void lv_theme_{{THEME_NAME_LOWER}}_deinit(void)
+void lv_theme_colors_deinit(void)
 {
     my_theme_t * theme = theme_def;
     if(theme) {
@@ -174,12 +186,12 @@ static void theme_apply(lv_theme_t * th, lv_obj_t * obj)
     LV_UNUSED(theme);
     LV_UNUSED(parent);
 
-{{APPLY}}
+
 }
 
 static void style_init_reset(lv_style_t * style)
 {
-    if(lv_theme_{{THEME_NAME_LOWER}}_is_inited()) {
+    if(lv_theme_colors_is_inited()) {
         lv_style_reset(style);
     }
     else {
@@ -191,5 +203,5 @@ static void resolution_change_event_cb(lv_event_t * e)
 {
     lv_display_t * disp = lv_event_get_target(e);
     my_theme_t * theme = lv_event_get_user_data(e);
-    lv_theme_{{THEME_NAME_LOWER}}_init(disp, &theme->config);
+    lv_theme_colors_init(disp, &theme->config);
 }

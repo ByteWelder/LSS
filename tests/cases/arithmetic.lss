@@ -1,0 +1,11 @@
+@theme arithmetic;
+
+@a: 10;
+@add: @a + 2;
+@subtract: @a - 2;
+@multiply: @a * 2;
+@divide: @a / 2;
+@negate: -@a;
+@precedence: @a + 2 * 3;
+@parentheses: (@a + 2) * 3;
+@nested: 1 - (2 - 3);

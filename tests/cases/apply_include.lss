@@ -1,0 +1,18 @@
+@theme apply_include;
+
+btn {
+    radius: 4dp;
+}
+
+highlight {
+    bgOpa: cover;
+}
+
+apply(button) {
+    btn: default;
+}
+
+apply(list > button) {
+    @include button;
+    highlight: state.focusKey;
+}

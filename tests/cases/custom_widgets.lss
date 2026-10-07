@@ -1,0 +1,20 @@
+// Widget classes that aren't part of LVGL
+@theme custom_widgets;
+
+@widget toolbar: my_toolbar_class;
+
+bar {
+    padAll: 0;
+}
+
+icon {
+    bgOpa: transp;
+}
+
+apply(toolbar) {
+    bar: default;
+}
+
+apply(toolbar > obj > button) {
+    icon: default;
+}

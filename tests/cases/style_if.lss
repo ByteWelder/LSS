@@ -1,0 +1,24 @@
+@theme style_if;
+
+@config {
+    isDark: bool = false;
+}
+
+button {
+    bgColor: white;
+    @if (!$isDark) {
+        shadowWidth: 3dp;
+    }
+    @if (display(small)) {
+        radius: 4dp;
+    } @else {
+        radius: 8dp;
+        @if ($isDark) {
+            borderWidth: 1;
+        }
+    }
+}
+
+apply(button) {
+    button: default;
+}

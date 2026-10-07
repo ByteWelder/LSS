@@ -1,0 +1,44 @@
+// Styles are guarded with the LV_USE_* macros of the widgets that use them
+@theme guards;
+
+unguarded {
+    radius: 0;
+}
+
+button_only {
+    radius: 1;
+}
+
+button_or_slider {
+    radius: 2;
+}
+
+button_in_tabview {
+    radius: 3;
+}
+
+dropdown_list {
+    radius: 4;
+}
+
+apply(obj) {
+    unguarded: default;
+}
+
+apply(button) {
+    unguarded: default;
+    button_only: default;
+    button_or_slider: default;
+}
+
+apply(slider) {
+    button_or_slider: default;
+}
+
+apply(tabview > button) {
+    button_in_tabview: default;
+}
+
+apply(dropdownlist) {
+    dropdown_list: default;
+}

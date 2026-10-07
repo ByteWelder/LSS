@@ -1,67 +1,161 @@
-from dataclasses import dataclass
-from enum import Enum
+from dataclasses import dataclass, field
+from typing import List, Optional, Union
 
-from source.printing import exit_with_error
-
-@dataclass
-class Theme:
-    name: str = "unnamed"
+# Expressions
 
 @dataclass
-class Property:
-    name: str
-    type: str
+class Number:
     value: str
 
 @dataclass
-class Style:
-    name: str
-    properties: list
+class Dp:
+    value: int
 
 @dataclass
-class Class:
-    name: str
-    styles: dict # maps a style name onto a list of states
+class Percent:
+    value: int
 
 @dataclass
 class Color:
-    red: int
-    green: int
-    blue: int
+    hex: str  # 6 hex digits, no prefix
 
-class VariableType(Enum):
-    COLOR = 0,
-    SIGNED_INT = 1,
-    BOOLEAN = 2,
-    SIGNED_NUMBER = 3,
-    VARIABLE = 4,
-    ESCAPED_STRING = 5,
-    TEXT_ALIGNMENT = 6,
-    DP = 7
+@dataclass
+class VarRef:
+    name: str  # includes "@"
+
+@dataclass
+class ConfigRef:
+    name: str  # without "$"
+
+@dataclass
+class String:
+    value: str  # unquoted
+
+@dataclass
+class Ident:
+    name: str
+
+@dataclass
+class Call:
+    name: str
+    args: list
+
+@dataclass
+class BinOp:
+    op: str
+    left: object
+    right: object
+
+@dataclass
+class Unary:
+    op: str
+    operand: object
+
+Expr = Union[Number, Dp, Percent, Color, VarRef, ConfigRef, String, Ident, Call, BinOp, Unary]
+
+# Declarations
+
+@dataclass
+class Theme:
+    name: str
+
+@dataclass
+class CustomWidget:
+    type: str
+    class_symbol: str
+
+@dataclass
+class ConfigField:
+    name: str
+    type: str
+    default: Optional[object]
+
+@dataclass
+class Config:
+    fields: List[ConfigField]
 
 @dataclass
 class Variable:
     name: str
-    type: VariableType
     value: object
+    guards: List[str] = field(default_factory=list)
 
-def to_variable_type(text: str) -> VariableType:
-    if text == "COLOR":
-        return VariableType.COLOR
-    elif text == "SIGNED_INT":
-        return VariableType.SIGNED_INT
-    elif text == "BOOLEAN":
-        return VariableType.BOOLEAN
-    elif text == "SIGNED_NUMBER":
-        return VariableType.SIGNED_NUMBER
-    elif text == "ESCAPED_STRING":
-        return VariableType.ESCAPED_STRING
-    elif text == "VARIABLE":
-        return VariableType.VARIABLE
-    elif text == "DP":
-        return VariableType.DP
-    elif text == "TEXT_ALIGNMENT":
-        return VariableType.TEXT_ALIGNMENT
-    else:
-        exit_with_error(f"VariableType not supported: {text}")
-        return None
+@dataclass
+class Property:
+    name: str
+    values: list
+
+@dataclass
+class StyleIf:
+    condition: object
+    then_items: list
+    else_items: list
+
+@dataclass
+class StyleCif:
+    macro: str
+    items: list
+
+@dataclass
+class Style:
+    name: str
+    items: list
+    guards: List[str] = field(default_factory=list)
+
+@dataclass
+class Transition:
+    name: str
+    properties: List[Property]
+    guards: List[str] = field(default_factory=list)
+
+@dataclass
+class Compound:
+    type: Optional[str]  # None matches any object
+    index: Optional[int]
+
+@dataclass
+class Selector:
+    compounds: List[Compound]
+
+    def target(self) -> Compound:
+        return self.compounds[-1]
+
+    def text(self) -> str:
+        parts = []
+        for compound in self.compounds:
+            name = compound.type if compound.type is not None else "*"
+            if compound.index is not None:
+                name += f"[{compound.index}]"
+            parts.append(name)
+        return " > ".join(parts)
+
+@dataclass
+class Target:
+    kind: str  # "default", "part" or "state"
+    name: Optional[str]
+
+@dataclass
+class ApplyStyle:
+    style: str
+    targets: List[Target]
+
+@dataclass
+class ApplyInclude:
+    selector: Selector
+
+@dataclass
+class ApplyIf:
+    condition: object
+    then_items: list
+    else_items: list
+
+@dataclass
+class ApplyCif:
+    macro: str
+    items: list
+
+@dataclass
+class ApplyRule:
+    selectors: List[Selector]
+    items: list
+    guards: List[str] = field(default_factory=list)
