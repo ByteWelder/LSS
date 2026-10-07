@@ -1,8 +1,12 @@
 # LSS
 
-LSS stands for "LVGL Style Sheet"
+LSS stands for "LVGL Style Sheet". It's a content-driven theme generator for LVGL.
 
-It's a content-driven theme generator for LVGL.
+Why?
+
+- Improved readability
+- Less lines to write than equivalent C code
+- Ask a designer to style your LVGL apps instead of a developer
 
 ## Usage
 
@@ -22,7 +26,7 @@ See [editor/README.md](editor/README.md) for syntax highlighting in CLion and VS
 Compile a theme:
 
 ```shell
-python compile.py themes/default.lss
+python compile.py custom.lss
 ```
 
 Output can be found in the `build/` folder as `lv_theme_<name>.c` and `lv_theme_<name>.h`.
@@ -31,20 +35,18 @@ Use `--output <folder>` to change the output folder and `--name <name>` to overr
 ### Using a generated theme
 
 ```c
-lv_theme_default_config_t config;
-lv_theme_default_config_init(&config); // Applies the defaults from @config
+lv_theme_custom_config_t config;
+lv_theme_custom_config_init(&config); // Applies the defaults from @config
 config.is_dark = true;
-lv_display_set_theme(display, lv_theme_default_init(display, &config));
+lv_display_set_theme(display, lv_theme_custom_init(display, &config));
 ```
 
 ## Syntax
 
-See [themes/default.lss](themes/default.lss) and [themes/mono.lss](themes/mono.lss) for complete examples.
-
 ```
-@theme default;                       // Theme name: lv_theme_default_init(), etc.
+@theme custom;                       // Theme name: lv_theme_custom_init(), etc.
 
-@config {                             // Generates lv_theme_default_config_t
+@config {                             // Generates lv_theme_custom_config_t
     isDark: bool = false;             // Types: bool, color, int, opa, font
     colorPrimary: color = palette(blue);
     font: font = raw("LV_FONT_DEFAULT");
