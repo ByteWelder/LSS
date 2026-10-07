@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>name</key>
+    <string>lss</string>
+    <key>description</key>
+    <string>Syntax highlighting for LSS (LVGL Style Sheets)</string>
+    <key>uuid</key>
+    <string>8014980B-44D9-4800-8244-79A8606101E2</string>
+</dict>
+</plist>

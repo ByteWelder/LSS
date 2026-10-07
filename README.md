@@ -13,6 +13,10 @@ Ensure Lark is installed. Preferably in a Python venv:
 pip install lark
 ```
 
+### Editor support
+
+See [editor/README.md](editor/README.md) for syntax highlighting in CLion and VS Code.
+
 ### Compiling
 
 Compile a theme:

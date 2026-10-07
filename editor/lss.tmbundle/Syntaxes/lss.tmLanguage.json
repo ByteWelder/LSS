@@ -1,0 +1,116 @@
+{
+  "name": "LSS",
+  "scopeName": "source.lss",
+  "fileTypes": [
+    "lss"
+  ],
+  "uuid": "765DA360-DE81-4FBE-A9AC-F4395DC16624",
+  "patterns": [
+    {
+      "name": "comment.line.double-slash.lss",
+      "match": "//.*$"
+    },
+    {
+      "name": "string.quoted.double.lss",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.lss",
+          "match": "\\\\."
+        }
+      ]
+    },
+    {
+      "name": "keyword.control.at-rule.lss",
+      "match": "@(?:theme|config|widget|transition|if|else|cif|include)\\b"
+    },
+    {
+      "name": "variable.other.lss",
+      "match": "@[A-Za-z_][A-Za-z0-9_]*(?:-[A-Za-z0-9_]+)*"
+    },
+    {
+      "name": "variable.parameter.lss",
+      "match": "\\$[A-Za-z_][A-Za-z0-9_]*"
+    },
+    {
+      "name": "constant.other.color.lss",
+      "match": "#(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})\\b"
+    },
+    {
+      "match": "\\b(\\d+)(dp)\\b",
+      "captures": {
+        "1": {
+          "name": "constant.numeric.lss"
+        },
+        "2": {
+          "name": "keyword.other.unit.lss"
+        }
+      }
+    },
+    {
+      "match": "\\b(\\d+)(%)",
+      "captures": {
+        "1": {
+          "name": "constant.numeric.lss"
+        },
+        "2": {
+          "name": "keyword.other.unit.lss"
+        }
+      }
+    },
+    {
+      "name": "constant.numeric.lss",
+      "match": "\\b\\d+(?:\\.\\d+)?\\b"
+    },
+    {
+      "name": "keyword.control.lss",
+      "match": "\\bapply\\b(?=\\s*\\()"
+    },
+    {
+      "match": "\\b(state|part)(\\.)([A-Za-z_][A-Za-z0-9_]*(?:-[A-Za-z_][A-Za-z0-9_]*)*)",
+      "captures": {
+        "1": {
+          "name": "support.constant.lss"
+        },
+        "2": {
+          "name": "punctuation.separator.lss"
+        },
+        "3": {
+          "name": "support.constant.lss"
+        }
+      }
+    },
+    {
+      "name": "storage.type.lss",
+      "match": "\\b(?:bool|int|color|opa|font)\\b(?=\\s*[=;])"
+    },
+    {
+      "name": "constant.language.lss",
+      "match": "\\b(?:true|false|default|transp|cover|circle)\\b"
+    },
+    {
+      "name": "support.function.lss",
+      "match": "\\b[A-Za-z_][A-Za-z0-9_]*(?:-[A-Za-z_][A-Za-z0-9_]*)*(?=\\s*\\()"
+    },
+    {
+      "name": "support.type.property-name.lss",
+      "match": "\\b[A-Za-z_][A-Za-z0-9_]*(?:-[A-Za-z_][A-Za-z0-9_]*)*(?=\\s*:)"
+    },
+    {
+      "name": "entity.name.class.lss",
+      "match": "\\b[A-Za-z_][A-Za-z0-9_]*(?:-[A-Za-z_][A-Za-z0-9_]*)*(?=\\s*\\{)"
+    },
+    {
+      "match": "\\b[A-Za-z_][A-Za-z0-9_]*(?:-[A-Za-z_][A-Za-z0-9_]*)*\\b"
+    },
+    {
+      "name": "keyword.operator.lss",
+      "match": "&&|\\|\\||==|!=|[<>*/+!|-]"
+    },
+    {
+      "name": "punctuation.terminator.lss",
+      "match": ";"
+    }
+  ]
+}
